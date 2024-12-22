@@ -162,6 +162,7 @@ class RCSwitch {
     #endif
     int nTransmitterPin;
     int nRepeatTransmit;
+    bool syncFactorFirst = false;
     
     Protocol protocol;
 

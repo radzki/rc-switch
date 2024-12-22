@@ -114,6 +114,7 @@ RCSwitch::RCSwitch() {
   this->nTransmitterPin = -1;
   this->setRepeatTransmit(10);
   this->setProtocol(1);
+  this->setSyncFactorFirst(false);
   #if not defined( RCSwitchDisableReceiving )
   this->nReceiverInterrupt = -1;
   this->setReceiveTolerance(60);
@@ -157,6 +158,14 @@ void RCSwitch::setProtocol(int nProtocol, int nPulseLength) {
 void RCSwitch::setPulseLength(int nPulseLength) {
   this->protocol.pulseLength = nPulseLength;
 }
+
+/**
+  * Sets sync factor to be sent first, before the code word
+  */
+void RCSwitch::setSyncFactorFirst(bool syncFactor) {
+  this->syncFactorFirst = syncFactor;
+}
+
 
 /**
  * Sets Repeat Transmits
@@ -508,13 +517,22 @@ void RCSwitch::send(unsigned long code, unsigned int length) {
 #endif
 
   for (int nRepeat = 0; nRepeat < nRepeatTransmit; nRepeat++) {
-    this->transmit(protocol.syncFactor);
+    
+    if (this->syncFactorFirst) {
+      this->transmit(protocol.syncFactor);
+    }
+    
     for (int i = length-1; i >= 0; i--) {
       if (code & (1L << i))
         this->transmit(protocol.one);
       else
         this->transmit(protocol.zero);
     }
+
+    if (!this->syncFactorFirst) {
+      this->transmit(protocol.syncFactor);
+    }
+
   }
 
   // Disable transmit after sending (i.e., for inverted protocols)
