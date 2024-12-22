@@ -97,6 +97,7 @@ class RCSwitch {
     void enableTransmit(int nTransmitterPin);
     void disableTransmit();
     void setPulseLength(int nPulseLength);
+    void setSyncFactorFirst(bool syncFactorFirst);
     void setRepeatTransmit(int nRepeatTransmit);
     #if not defined( RCSwitchDisableReceiving )
     void setReceiveTolerance(int nPercent);
